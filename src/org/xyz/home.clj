@@ -10,7 +10,14 @@
 (defn home-page [{:keys [recaptcha/site-key params] :as ctx}]
   (ui/page
    ctx
-   [:p "Hello world"]))
+   [:p "Hello world"]
+   [:p "Check out this cool art!"]
+   [:canvas#artCanvas {
+                       :width 600
+                       :height 300
+                       }]
+   [:p "Check out this cool clock!"]
+   [:p#dynamicClock "00:00:00 AM"]))
 
 (def module
   {:routes [[""

@@ -1,0 +1,18 @@
+;; shadow-cljs configuration
+{:nrepl {:port 8777}
+ :source-paths
+ ["src"]
+
+ :dependencies
+ []
+
+ :dev-http {8090 "public"}
+ :builds
+ {
+  :app {:output-dir "target/resources/public/cljs"
+        :asset-path "/cljs"
+        :target :browser
+        :modules {:main {:init-fn org.xyz.frontend.main/main!}}
+        }
+  }
+ }

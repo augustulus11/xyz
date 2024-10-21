@@ -31,6 +31,14 @@
     (str "/js/main.js?t=" last-modified)
     "/js/main.js"))
 
+(defn cljs-path []
+  (if-some [last-modified (some-> (io/resource "public/cljs/main.js")
+                                  ring-response/resource-data
+                                  :last-modified
+                                  (.getTime))]
+    (str "/cljs/main.js?t=" last-modified)
+    "/cljs/main.js"))
+
 (defn base [{:keys [::recaptcha] :as ctx} & body]
   (apply
    biff/base-html
@@ -44,6 +52,7 @@
                             (concat [[:link {:rel "stylesheet" :href (tailwind-css-path)}]
                                      [:link {:rel "stylesheet" :href (style-css-path)}]
                                      [:script {:src (js-path)}]
+                                     [:script {:src (cljs-path) :defer true }]
                                      [:script {:src "https://unpkg.com/htmx.org@1.9.12"}]
                                      [:script {:src "https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js"}]
                                      [:script {:src "https://unpkg.com/hyperscript.org@0.9.8"}]]
