@@ -1,0 +1,2 @@
+* My website
+This repo is for my website. It is written in clojure/script and uses Biff for the backend logic.
