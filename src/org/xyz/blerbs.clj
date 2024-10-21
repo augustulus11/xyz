@@ -1,4 +1,4 @@
-(ns org.xyz.home
+(ns org.xyz.blerbs
   (:require [clj-http.client :as http]
             [com.biffweb :as biff]
             [org.xyz.middleware :as mid]
@@ -7,11 +7,11 @@
             [rum.core :as rum]
             [xtdb.api :as xt]))
 
-(defn home-page [{:keys [recaptcha/site-key params] :as ctx}]
+(defn blerbs-page [ctx & body]
   (ui/page
    ctx
-   [:p "Hello world"]))
+   [:p "These are my blerbs"]))
 
 (def module
-  {:routes [[""
-             ["/"                  {:get home-page}]]]})
+  {:routes [["/blerbs"
+             ["/" {:get blerbs-page}]]]})

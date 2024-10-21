@@ -1,4 +1,4 @@
-(ns org.xyz.home
+(ns org.xyz.blog
   (:require [clj-http.client :as http]
             [com.biffweb :as biff]
             [org.xyz.middleware :as mid]
@@ -7,11 +7,11 @@
             [rum.core :as rum]
             [xtdb.api :as xt]))
 
-(defn home-page [{:keys [recaptcha/site-key params] :as ctx}]
+(defn blog-page [ctx & body]
   (ui/page
    ctx
-   [:p "Hello world"]))
+   [:p "This is my blog"]))
 
 (def module
-  {:routes [[""
-             ["/"                  {:get home-page}]]]})
+  {:routes [["/blog"
+             ["/" {:get blog-page}]]]})

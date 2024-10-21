@@ -7,13 +7,21 @@
             [ring.util.response :as ring-response]
             [rum.core :as rum]))
 
-(defn css-path []
+(defn tailwind-css-path []
   (if-some [last-modified (some-> (io/resource "public/css/main.css")
                                   ring-response/resource-data
                                   :last-modified
                                   (.getTime))]
     (str "/css/main.css?t=" last-modified)
     "/css/main.css"))
+
+(defn style-css-path []
+  (if-some [last-modified (some-> (io/resource "public/css/style.css")
+                                  ring-response/resource-data
+                                  :last-modified
+                                  (.getTime))]
+    (str "/css/style.css?t=" last-modified)
+    "/css/style.css"))
 
 (defn js-path []
   (if-some [last-modified (some-> (io/resource "public/js/main.js")
@@ -33,28 +41,35 @@
                      :description "Just an epic website."
                      :image "https://clojure.org/images/clojure-logo-120b.png"})
        (update :base/head (fn [head]
-                            (concat [[:link {:rel "stylesheet" :href (css-path)}]
+                            (concat [[:link {:rel "stylesheet" :href (tailwind-css-path)}]
+                                     [:link {:rel "stylesheet" :href (style-css-path)}]
                                      [:script {:src (js-path)}]
                                      [:script {:src "https://unpkg.com/htmx.org@1.9.12"}]
                                      [:script {:src "https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js"}]
-                                     [:script {:src "https://unpkg.com/hyperscript.org@0.9.8"}]
-                                     (when recaptcha
-                                       [:script {:src "https://www.google.com/recaptcha/api.js"
-                                                 :async "async" :defer "defer"}])]
+                                     [:script {:src "https://unpkg.com/hyperscript.org@0.9.8"}]]
                                     head))))
    body))
+
+
+(defn nav []
+  [:.top-row
+   [:.container-fluid
+    [:a.link {:href "/blog"} "blog"]
+    [:a.link {:href "/blerbs"} "blerbs"]
+    [:a.link {:href "/buttons"} "buttons"]
+    [:a.link {:href "/credits"} "credits"]]])
 
 (defn page [ctx & body]
   (base
    ctx
-   [:.flex-grow]
-   [:.p-3.mx-auto.max-w-screen-sm.w-full
-    (when (bound? #'csrf/*anti-forgery-token*)
-      {:hx-headers (cheshire/generate-string
-                    {:x-csrf-token csrf/*anti-forgery-token*})})
-    body]
-   [:.flex-grow]
-   [:.flex-grow]))
+   [:.page
+    [:.sidebar (nav)]
+    [:.p-3.mx-auto.max-w-screen-sm.w-full
+     (when (bound? #'csrf/*anti-forgery-token*)
+       {:hx-headers (cheshire/generate-string
+                     {:x-csrf-token csrf/*anti-forgery-token*})})
+     [:main
+      [:article body]]]]))
 
 (defn on-error [{:keys [status ex] :as ctx}]
   {:status status

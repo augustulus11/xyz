@@ -1,8 +1,11 @@
 (ns org.xyz
   (:require [com.biffweb :as biff]
             [org.xyz.email :as email]
-            [org.xyz.app :as app]
             [org.xyz.home :as home]
+            [org.xyz.blog :as blog]
+            [org.xyz.blerbs :as blerbs]
+            [org.xyz.webrings-and-buttons :as webrings-and-buttons]
+            [org.xyz.credits :as credits]
             [org.xyz.middleware :as mid]
             [org.xyz.ui :as ui]
             [org.xyz.worker :as worker]
@@ -16,9 +19,12 @@
   (:gen-class))
 
 (def modules
-  [app/module
-   (biff/authentication-module {})
+  [(biff/authentication-module {})
    home/module
+   blog/module
+   blerbs/module
+   webrings-and-buttons/module
+   credits/module
    schema/module
    worker/module])
 

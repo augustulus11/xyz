@@ -1,4 +1,4 @@
-(ns org.xyz.home
+(ns org.xyz.webrings-and-buttons
   (:require [clj-http.client :as http]
             [com.biffweb :as biff]
             [org.xyz.middleware :as mid]
@@ -7,11 +7,11 @@
             [rum.core :as rum]
             [xtdb.api :as xt]))
 
-(defn home-page [{:keys [recaptcha/site-key params] :as ctx}]
+(defn webring-and-buttons-page [ctx & body]
   (ui/page
    ctx
-   [:p "Hello world"]))
+   [:p "This has my webrings and buttons"]))
 
 (def module
-  {:routes [[""
-             ["/"                  {:get home-page}]]]})
+  {:routes [["/webrings-and-buttons"
+             ["/" {:get webring-and-buttons-page}]]]})
