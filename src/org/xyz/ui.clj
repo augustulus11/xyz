@@ -59,26 +59,21 @@
                                     head))))
    body))
 
-
-(defn nav []
-  [:.top-row
-   [:.container-fluid
-    [:a.link {:href "/blog"} "blog"]
-    [:a.link {:href "/blerbs"} "blerbs"]
-    [:a.link {:href "/buttons"} "buttons"]
-    [:a.link {:href "/credits"} "credits"]]])
-
 (defn page [ctx & body]
   (base
    ctx
    [:.page
-    [:.sidebar (nav)]
-    [:.p-3.mx-auto.max-w-screen-sm.w-full
-     (when (bound? #'csrf/*anti-forgery-token*)
-       {:hx-headers (cheshire/generate-string
-                     {:x-csrf-token csrf/*anti-forgery-token*})})
-     [:main
-      [:article body]]]]))
+    [:nav
+     [:.top-row "Navigation"
+      [:.container-fluid
+       [:ul
+        [:li [:a.link {:href "/blog"}    "blog"]]
+        [:li [:a.link {:href "/blerbs"}  "blerbs"]]
+        [:li [:a.link {:href "/buttons"} "buttons"]]
+        [:li [:a.link {:href "/credits"} "credits"]]]]]]
+    [:main
+     [:article body]]
+    [:.updates-column [:p "Hello world"]]]))
 
 (defn on-error [{:keys [status ex] :as ctx}]
   {:status status
