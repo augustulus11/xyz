@@ -10,14 +10,14 @@
 (defn home-page [{:keys [recaptcha/site-key params] :as ctx}]
   (ui/page
    ctx
-   [:p "Hello world"]
+   [:h5 "- Welcome to my 100% FREE Website!"]
    [:p "Check out this cool art!"]
-   [:canvas#artCanvas {
+   [:canvas#art-canvas {
                        :width 600
                        :height 300
                        }]
-   [:p "Check out this cool clock!"]
-   [:p#dynamicClock "00:00:00 AM"]))
+   [:p "Your current time is:"]
+   [:p#dynamic-clock "00:00:00 AM"]))
 
 (def module
   {:routes [[""

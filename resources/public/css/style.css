@@ -1,5 +1,33 @@
-.test {
-  color: red;
+:root {
+    --terminal-green: #33FF33;
+    --background-primary: #171717;
+    --background-secondary: #333333;
+    --foreground-primary: #8B8783;
+    --foreground-secondary: #AAAAAA;
+    --header: #BB86FC;
+    --link: #1dcdf3;
+}
+
+h1 {
+    color: var(--header);
+    font-size: 56pt;
+}
+
+h4 {
+    font-size: 24pt;
+}
+
+h5 {
+    font-size: 20pt;
+}
+
+#internetz {
+    margin-top: 50px;
+}
+
+body {
+    background-color: var(--background-primary);
+    color: var(--foreground-primary);
 }
 
 ul {
@@ -14,17 +42,52 @@ nav {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    background-color: #f1f1f1;
+    height: 100vh;
+    background-color: var(--background-secondary);
 }
 
-/* Change the link color on hover */
-li a:hover {
-  background-color: #555;
-  color: white;
-}
-
-.page {
+#page {
     display: grid;
     grid-auto-rows: 1fr;
     grid-template-columns: 1fr 3fr 1fr;
+}
+
+#banner {
+    display: grid;
+    grid-auto-rows: 1fr;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+
+.updates-column {
+    height: 100vh;
+    background-color: #f1f1f1;
+    background-color: var(--background-secondary);
+}
+
+#dynamic-clock {
+    color: var(--terminal-green);
+}
+
+.rounded-corners {
+    border-radius: 25px;
+}
+
+.slightly-padded {
+    padding: 10px;
+}
+
+a {
+    color: var(--link);
+}
+
+article :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--header);
+}
+
+nav a:hover {
+    color: var(--terminal-green);
+}
+
+#nav-selected {
+    background-color: red;
 }

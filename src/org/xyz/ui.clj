@@ -53,8 +53,6 @@
                                      [:link {:rel "stylesheet" :href (style-css-path)}]
                                      [:script {:src (js-path)}]
                                      [:script {:src (cljs-path) :defer true }]
-                                     [:script {:src "https://unpkg.com/htmx.org@1.9.12"}]
-                                     [:script {:src "https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js"}]
                                      [:script {:src "https://unpkg.com/hyperscript.org@0.9.8"}]]
                                     head))))
    body))
@@ -62,18 +60,23 @@
 (defn page [ctx & body]
   (base
    ctx
-   [:.page
-    [:nav
-     [:.top-row "Navigation"
+   [:#banner
+    [:#just-a-blank-div]
+    [:h1 "august11.xyz"]
+    [:h3#internetz "Voted numbah 1 site on all teh internetz"]]
+   [:#page
+    [:nav.rounded-corners
+     [:.top-row [:h4 "Navigation"]
       [:.container-fluid
        [:ul
-        [:li [:a.link {:href "/blog"}    "blog"]]
-        [:li [:a.link {:href "/blerbs"}  "blerbs"]]
-        [:li [:a.link {:href "/buttons"} "buttons"]]
-        [:li [:a.link {:href "/credits"} "credits"]]]]]]
+        [:li [:a.link#nav-home    {:href "/"}        "home"]]
+        [:li [:a.link#nav-blog    {:href "/blog"}    "blog"]]
+        [:li [:a.link#nav-blerbs  {:href "/blerbs"}  "blerbs"]]
+        [:li [:a.link#nav-buttons {:href "/buttons"} "buttons"]]
+        [:li [:a.link#nav-credits {:href "/credits"} "credits"]]]]]]
     [:main
      [:article body]]
-    [:.updates-column [:p "Hello world"]]]))
+    [:.updates-column.rounded-corners.slightly-padded [:p "Hello world"]]]))
 
 (defn on-error [{:keys [status ex] :as ctx}]
   {:status status
