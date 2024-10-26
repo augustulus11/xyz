@@ -4,8 +4,7 @@
             [org.xyz.middleware :as mid]
             [org.xyz.ui :as ui]
             [org.xyz.settings :as settings]
-            [rum.core :as rum]
-            [xtdb.api :as xt]))
+            [rum.core :as rum]))
 
 (defn webring-and-buttons-page [ctx & body]
   (ui/page

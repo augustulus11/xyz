@@ -5,14 +5,12 @@
             [com.biffweb :as biff :refer [test-xtdb-node]]
             [org.xyz :as main]
             [malli.generator :as mg]
-            [rum.core :as rum]
-            [xtdb.api :as xt]))
+            [rum.core :as rum]))
 
 (deftest example-test
   (is (= 4 (+ 2 2))))
 
 (defn get-context [node]
   {:biff.xtdb/node  node
-   :biff/db         (xt/db node)
    :biff/malli-opts #'main/malli-opts})
 

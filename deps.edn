@@ -11,7 +11,13 @@
         org.slf4j/jul-to-slf4j     {:mvn/version "1.7.36"}
         org.slf4j/jcl-over-slf4j   {:mvn/version "1.7.36"}}
  :aliases
- {:dev {:extra-deps {com.biffweb/tasks {:git/url "https://github.com/jacobobryant/biff", :git/sha "4b85074", :git/tag "v1.8.23", :deps/root "libs/tasks"}}
+ {:dev {:extra-deps {com.biffweb/tasks {:git/url "https://github.com/jacobobryant/biff",
+                                        :exclusions [com.xtdb/xtdb-core
+                                                     com.xtdb/xtdb-rocksdb
+                                                     com.xtdb/xtdb-jdbc]
+                                        :git/sha "4b85074",
+                                        :git/tag "v1.8.23",
+                                        :deps/root "libs/tasks"}}
         :extra-paths ["dev" "test"]
         :jvm-opts ["-XX:-OmitStackTraceInFastThrow"
                    "-XX:+CrashOnOutOfMemoryError"
