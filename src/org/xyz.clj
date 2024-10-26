@@ -15,7 +15,11 @@
             [clojure.tools.namespace.repl :as tn-repl]
             [malli.core :as malc]
             [malli.registry :as malr]
-            [nrepl.cmdline :as nrepl-cmd])
+            [nrepl.cmdline :as nrepl-cmd]
+            [next.jdbc :as jdbc]
+            [honey.sql :as honey]
+            [clojure.edn :as edn]
+            [clojure.java.io :as io])
   (:gen-class))
 
 (def modules
@@ -27,6 +31,18 @@
    credits/module
    schema/module
    worker/module])
+
+(def appsettings (try
+                   (with-open [r (io/reader "appsettings.edn")]
+                     (edn/read (java.io.PushbackReader. r)))
+                   (catch java.io.IOException e
+                     (log/fatal "Couldn't open the appsettings file: " e)
+                     (throw e))
+                   (catch RuntimeException e
+                     (log/fatal "Couldn't parse the appsettings file: " e)
+                     (throw e))))
+
+(def db (jdbc/get-datasource (appsettings :db-config)))
 
 (def routes [["" {:middleware [mid/wrap-site-defaults]}
               (keep :routes modules)]
