@@ -1,0 +1,10 @@
+{
+  "sqls": {
+    "connections": [
+      {
+        "driver": "postgresql",
+        "dataSourceName": "host=127.0.0.1 port=5432 user=tester password=postgres dbname=xyz sslmode=disable"
+      }
+    ]
+  }
+}
