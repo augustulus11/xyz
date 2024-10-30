@@ -39,6 +39,7 @@
 
 (defn wrap-base-defaults [handler]
   (-> handler
+      wrap-debug
       biff/wrap-https-scheme
       biff/wrap-resource
       biff/wrap-internal-error

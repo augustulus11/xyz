@@ -14,6 +14,19 @@
   []
   (println "Hello"))
 
+(defn start-postgres []
+  (try
+    (shell {:out nil} "docker inspect postgres")
+    (catch Exception e
+      (shell "docker pull postgres")))
+  (apply shell
+         (concat ["docker" "run" "--rm"]
+                 (:example/docker-postgres-args @config)
+                 ["-v" (str (.getAbsolutePath (io/file "storage/postgres"))
+                            ":/var/lib/postgresql/data")
+                  "postgres"])))
+
+
 (defn dev
   "Starts the app locally.
 
@@ -33,10 +46,22 @@
     ;; that can create the directory before starting the JVM.
     (do
       (io/make-parents "target/resources/_")
-      (shell "clj" "-M:dev" "dev"))
-    (do
-      (tasks/future (shell "npx shadow-cljs watch app"))
-      (tasks/dev))))
+      (shell "clj" "-M:dev" "dev")))
+  (let [{:keys [biff.tasks/main-ns biff.nrepl/port] :as ctx} @config]
+    (when-not (fs/which "docker")
+      (println "The `docker` command could not be found. Please make sure docker is installed.")
+      (System/exit 1))
+    (when-not (fs/exists? "config.env")
+      (run-task "generate-config"))
+    (when (fs/exists? "package.json")
+      (shell "npm install"))
+    (future (run-task "css" "--watch"))
+    (future (start-postgres))
+    (spit ".nrepl-port" port)
+    ((requiring-resolve (symbol (str main-ns) "-main"))))
+  (do
+    (tasks/future (shell "npx shadow-cljs watch app"))
+    (tasks/dev)))
 
 (defn deploy
   "Pushes code to the server and restarts the app.

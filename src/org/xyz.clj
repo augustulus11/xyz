@@ -23,26 +23,13 @@
   (:gen-class))
 
 (def modules
-  [(biff/authentication-module {})
-   home/module
+  [home/module
    blog/module
    blerbs/module
    webrings-and-buttons/module
    credits/module
    schema/module
    worker/module])
-
-(def appsettings (try
-                   (with-open [r (io/reader "appsettings.edn")]
-                     (edn/read (java.io.PushbackReader. r)))
-                   (catch java.io.IOException e
-                     (log/fatal "Couldn't open the appsettings file: " e)
-                     (throw e))
-                   (catch RuntimeException e
-                     (log/fatal "Couldn't parse the appsettings file: " e)
-                     (throw e))))
-
-(def db (jdbc/get-datasource (appsettings :db-config)))
 
 (def routes [["" {:middleware [mid/wrap-site-defaults]}
               (keep :routes modules)]
@@ -65,33 +52,43 @@
   (generate-assets! ctx)
   (test/run-all-tests #"org.xyz.*-test"))
 
-(def malli-opts
-  {:registry (malr/composite-registry
-              malc/default-registry
-              (apply biff/safe-merge (keep :schema modules)))})
-
 (def initial-system
   {:biff/modules #'modules
-   :biff/send-email #'email/send-email
+   :biff/merge-context-fn identity
    :biff/handler #'handler
-   :biff/malli-opts #'malli-opts
    :biff.beholder/on-save #'on-save
-   :biff.middleware/on-error #'ui/on-error
-   :org.xyz/chat-clients (atom #{})})
+   :biff.middleware/on-error #'ui/on-error})
+
+(comment (defn use-postgres
+           "Create a database reference."
+           [{:keys [org.xyz/db-config] :as ctx}]
+           (assoc ctx :org.xyz/db (jdbc/get-datasource db-config))))
+
+(defn use-postgres [{:keys [biff/secret] :as ctx}]
+  (log/info "It's ============== " (secret :example/postgres-url))
+  (let [ds (jdbc/get-datasource (secret :example/postgres-url))]
+    (comment (jdbc/execute! ds [(slurp (io/resource "migrations.sql"))]))
+    (assoc ctx :example/ds ds)))
+
+(defn use-thing
+  "Test."
+  [ctx]
+  (assoc ctx :myval 69))
 
 (defonce system (atom {}))
 
 (def components
   [biff/use-aero-config
    biff/use-queues
-   biff/use-htmx-refresh
    biff/use-jetty
    biff/use-chime
-   biff/use-beholder])
+   biff/use-beholder
+   use-thing
+   use-postgres])
 
 (defn start []
   (let [new-system (reduce (fn [system component]
-                             (log/info "starting:" (str component))
+                             (log/info "Starting: " component)
                              (component system))
                            initial-system
                            components)]

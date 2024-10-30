@@ -3,19 +3,18 @@
    [next.jdbc :as jdbc]
    [honey.sql :as honey]
    [ring.util.codec :as ring-codec]
-   [clojure.tools.logging :as log]
-   [org.xyz :as xyz]))
+   [clojure.tools.logging :as log]))
 
 (defn exec-sql
   "Execute the sql string."
-  [command]
-  (log/info "Performing SQL query: " command)
-  (jdbc/execute! xyz/db command))
+  [db command]
+  (log/debug "Performing SQL query: " command)
+  (jdbc/execute! db command))
 
 (defn exec-honey-sql
   "Execute honey sql."
-  [command]
-  (exec-sql (honey/format command)))
+  [db command]
+  (exec-sql db (honey/format command)))
 
 (defn get-url-from-title
   "."
@@ -25,7 +24,7 @@
 
 (defn create-blog-post
   "Create a blog post."
-  [title content & {:keys [image-path author previous-blog-url next-blog-url]}]
+  [db title content & {:keys [image-path author previous-blog-url next-blog-url]}]
   (let [url (get-url-from-title title)]
     (log/info "Creating blog post at '"
               url
@@ -33,25 +32,25 @@
               " with image '" image-path "'"
               " with previous blog '" previous-blog-url "'"
               " and next blog '" next-blog-url "'")
-    (exec-honey-sql {:insert-into [:blog]
-                     :columns [:url-name :content :post-type :image-path :author :previous-blog :next-blog]
-                     :values [[url content [:cast "blog" :post_type]
-                               image-path author previous-blog-url next-blog-url]]})))
+    (exec-honey-sql db {:insert-into [:blog]
+                        :columns [:url-name :content :post-type :image-path :author :previous-blog :next-blog]
+                        :values [[url content [:cast "blog" :post_type]
+                                  image-path author previous-blog-url next-blog-url]]})))
 (defn get-n-blog-posts
   "Get all the blog posts."
-  [n]
-  (exec-honey-sql {:select [:*]
-                   :from [:blog]
-                   :order-by [:created]
-                   :limit n}))
+  [db n]
+  (exec-honey-sql db {:select [:*]
+                      :from [:blog]
+                      :order-by [:created]
+                      :limit n}))
 
 (defn get-blog-by-url
   "Get blog post by its url."
-  [url]
-  (exec-honey-sql {:select [:blog]
-                   :where [:= :url-name url]}))
+  [db url]
+  (exec-honey-sql db {:select [:blog]
+                      :where [:= :url-name url]}))
 
 (defn get-blog-by-title
   "Get blog post by its title."
-  [name]
-  (get-blog-by-url (get-url-from-title name)))
+  [db name]
+  (get-blog-by-url db (get-url-from-title name)))

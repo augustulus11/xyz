@@ -1,8 +1,11 @@
 (ns repl
   (:require [org.xyz :as main]
             [com.biffweb :as biff :refer [q]]
+            [clojure.tools.logging :as log]
             [clojure.edn :as edn]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as str]
+            [next.jdbc :as jdbc]))
 
 ;; REPL-driven development
 ;; ----------------------------------------------------------------------------------------
@@ -28,10 +31,16 @@
   (biff/merge-context @main/system))
 
 (defn add-fixtures []
-  (biff/submit-tx (get-context)
-    (-> (io/resource "fixtures.edn")
-        slurp
-        edn/read-string)))
+  (let [{:keys [example/ds] :as ctx} (get-context)
+        user-id (random-uuid)]
+    (log/info "Full CTX: " ctx)
+    (log/info "Just db: " (ctx :example/ds))
+    (log/info "Just db2: " (ctx :myval))
+    (comment
+      (jdbc/execute! ds ["INSERT INTO users (id, email, foo) VALUES (?, ?, ?)"
+                         user-id "a@example.com" "Some Value"])
+      (jdbc/execute! ds ["INSERT INTO message (id, user_id, text) VALUES (?, ?, ?)"
+                         (random-uuid) user-id "hello there"]))))
 
 (defn check-config []
   (let [prod-config (biff/use-aero-config {:biff.config/profile "prod"})

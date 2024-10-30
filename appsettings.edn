@@ -1,5 +1,0 @@
-{:db-config {:dbtype "postgresql"
-             :dbname "xyz"
-             :host "localhost"
-             :user "tester"
-             :password "postgres"}}

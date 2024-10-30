@@ -36,6 +36,21 @@
  :biff.tasks/css-output             "target/resources/public/css/main.css"
  :biff.tasks/deploy-untracked-files [#ref [:biff.tasks/css-output]
                                      "config.env"]
+ :org.xyz/db-config {:dbtype "postgresql"
+                     :dbname "xyz"
+                     :host "localhost"
+                     :user "tester"
+                     :password "postgres"}
+
+
+  ; Used in dev, not in prouduction.
+  :example/docker-postgres-args ["-e" "POSTGRES_DB=xyz"
+                                "-e" "POSTGRES_USER=tester"
+                                "-e" "POSTGRES_PASSWORD=postgres"
+                                "-p" "5433:5433"]
+
+ :example/postgres-url         #profile {:prod #biff/secret "PROD_POSTGRES_URL"
+                                         :default #biff/secret "DEV_POSTGRES_URL"}
 
  ;; `clj -M:dev prod-dev` will run the soft-deploy task whenever files in these directories are changed.
  :biff.tasks/watch-dirs             ["src" "dev" "resources" "test"]
